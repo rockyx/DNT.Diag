@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DNT.Diag", "DNT.Diag.csproj
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dntdiag", "native\dntdiag.vcxproj", "{5DCE9700-9A13-4C26-A9B8-FD51CE2ADA0C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DNT.Diag.Test", "DNT.Diag.Test\DNT.Diag.Test.csproj", "{CA10CB24-5D25-404A-B3E5-AE83BF3F1C08}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,6 +45,18 @@ Global
 		{5DCE9700-9A13-4C26-A9B8-FD51CE2ADA0C}.Release|Win32.Build.0 = Release|Win32
 		{5DCE9700-9A13-4C26-A9B8-FD51CE2ADA0C}.Release|x64.ActiveCfg = Release|x64
 		{5DCE9700-9A13-4C26-A9B8-FD51CE2ADA0C}.Release|x64.Build.0 = Release|x64
+		{CA10CB24-5D25-404A-B3E5-AE83BF3F1C08}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA10CB24-5D25-404A-B3E5-AE83BF3F1C08}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA10CB24-5D25-404A-B3E5-AE83BF3F1C08}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{CA10CB24-5D25-404A-B3E5-AE83BF3F1C08}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{CA10CB24-5D25-404A-B3E5-AE83BF3F1C08}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{CA10CB24-5D25-404A-B3E5-AE83BF3F1C08}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{CA10CB24-5D25-404A-B3E5-AE83BF3F1C08}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA10CB24-5D25-404A-B3E5-AE83BF3F1C08}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CA10CB24-5D25-404A-B3E5-AE83BF3F1C08}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{CA10CB24-5D25-404A-B3E5-AE83BF3F1C08}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{CA10CB24-5D25-404A-B3E5-AE83BF3F1C08}.Release|Win32.ActiveCfg = Release|Any CPU
+		{CA10CB24-5D25-404A-B3E5-AE83BF3F1C08}.Release|x64.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
