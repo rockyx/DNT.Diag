@@ -76,5 +76,13 @@ XuXoVRdjYf1MqKXzL65az0vecmt/hplcg4SPjzM1FUxTQmVXVDnTSUihD2+m4c6kJxQ0TjH+
       Register.Save(enUSReg);
       Assert.IsTrue(Register.IsReged);
     }
+
+    [TestMethod]
+    public void IdCode()
+    {
+      string idExp = "GI3ECV4WGA4EWXAK";
+      string idAct = Register.IdCode;
+      Assert.AreEqual(idExp, idAct);
+    }
   }
 }
