@@ -78,6 +78,9 @@ namespace DNT.Diag.IO
 
     public void Connect()
     {
+      if (_native == IntPtr.Zero)
+        throw new NullReferenceException();
+
       if (Version == CommboxVer.C168)
       {
         OpenC168SerialMode(); // C168 Only support SerialPort.
@@ -94,6 +97,9 @@ namespace DNT.Diag.IO
 
     public void Disconnect()
     {
+      if (_native == IntPtr.Zero)
+        throw new NullReferenceException();
+
       if (!NativeMethods.RCommboxDisconnect(_native))
         throw new IOException();
     }
