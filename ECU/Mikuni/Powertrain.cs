@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Text;
+using System.IO;
 
 using DNT.Diag.Interop;
+using DNT.Diag.DB;
+using DNT.Diag.IO;
 
 namespace DNT.Diag.ECU.Mikuni
 {
@@ -9,9 +12,9 @@ namespace DNT.Diag.ECU.Mikuni
   {
     private IntPtr _native = IntPtr.Zero;
 
-    public Powertrain(IntPtr boxNative, IntPtr dbNative, PowertrainModel model)
+    public Powertrain(Commbox box, VehicleDB db, PowertrainModel model)
     {
-      _native = NativeMethods.RMikuniPowertrainConstruct(boxNative, dbNative, (int)model);
+      _native = NativeMethods.RMikuniPowertrainConstruct(box.Native, db.Native, (int)model);
       base.Native = NativeMethods.RMikuniPowertrainCast(_native);
     }
 
@@ -26,23 +29,28 @@ namespace DNT.Diag.ECU.Mikuni
       {
         byte[] utf8 = new byte[100];
         int length = NativeMethods.RMikuniPowertrainGetECUVersion(_native, utf8);
+        if (length <= 0)
+          throw new IOException(LastInfo);
         return UTF8Encoding.UTF8.GetString(utf8, 0, length);
       }
     }
 
-    public bool TPSIdleSetting()
+    public void TPSIdleSetting()
     {
-      return NativeMethods.RMikuniPowertrainTPSIdleSetting(_native);
+      if (!NativeMethods.RMikuniPowertrainTPSIdleSetting(_native))
+        throw new IOException(LastInfo);
     }
 
-    public bool LongTermLearnValueZoneInitialization()
+    public void LongTermLearnValueZoneInitialization()
     {
-      return NativeMethods.RMikuniPowertrainLongTermLearnValueZoneInitialization(_native);
+      if (!NativeMethods.RMikuniPowertrainLongTermLearnValueZoneInitialization(_native))
+        throw new IOException(LastInfo);
     }
 
-    public bool ISCLearnValueInitialization()
+    public void ISCLearnValueInitialization()
     {
-      return NativeMethods.RMikuniPowertrainISCLearnValueInitialization(_native);
+      if (!NativeMethods.RMikuniPowertrainISCLearnValueInitialization(_native))
+        throw new IOException(LastInfo);
     }
   }
 }

@@ -1,6 +1,8 @@
 ﻿using System;
 
 using DNT.Diag.Interop;
+using DNT.Diag.IO;
+using DNT.Diag.DB;
 
 namespace DNT.Diag.ECU.Bosch.Canbus
 {
@@ -8,9 +10,9 @@ namespace DNT.Diag.ECU.Bosch.Canbus
   {
     private IntPtr _native = IntPtr.Zero;
 
-    public Chassis(IntPtr boxNative, IntPtr dbNative, ChassisModel model)
+    public Chassis(Commbox box, VehicleDB db, ChassisModel model)
     {
-      _native = NativeMethods.RBoschCanbusChassisConstruct(boxNative, dbNative, (int)model);
+      _native = NativeMethods.RBoschCanbusChassisConstruct(box.Native, db.Native, (int)model);
       base.Native = NativeMethods.RBoschCanbusChassisCast(_native);
     }
 

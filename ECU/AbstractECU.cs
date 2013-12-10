@@ -16,9 +16,9 @@ namespace DNT.Diag.ECU
 
     protected AbstractECU()
     {
-      _troubleCode = new TroubleCodeFunction(IntPtr.Zero);
-      _dataStream = new DataStreamFunction(IntPtr.Zero);
-      _freezeStream = new DataStreamFunction(IntPtr.Zero);
+      _troubleCode = new TroubleCodeFunction(IntPtr.Zero, this);
+      _dataStream = new DataStreamFunction(IntPtr.Zero, this);
+      _freezeStream = new DataStreamFunction(IntPtr.Zero, this);
       _activeTest = new ActiveTestFunction(IntPtr.Zero);
     }
 
@@ -47,9 +47,9 @@ namespace DNT.Diag.ECU
     {
       if (!NativeMethods.RAbstractECUIOChannelInit(_native))
         throw new IOException(LastInfo);
-      _troubleCode = new TroubleCodeFunction(NativeMethods.RAbstractECUGetTroubleCode(_native));
-      _dataStream = _dataStream = new DataStreamFunction(NativeMethods.RAbstractECUGetDataStream(_native));
-      _freezeStream = new DataStreamFunction(NativeMethods.RAbstractECUGetFreezeStream(_native));
+      _troubleCode = new TroubleCodeFunction(NativeMethods.RAbstractECUGetTroubleCode(_native), this);
+      _dataStream = _dataStream = new DataStreamFunction(NativeMethods.RAbstractECUGetDataStream(_native), this);
+      _freezeStream = new DataStreamFunction(NativeMethods.RAbstractECUGetFreezeStream(_native), this);
       _activeTest = new ActiveTestFunction(NativeMethods.RAbstractECUGetActiveTest(_native));
     }
 

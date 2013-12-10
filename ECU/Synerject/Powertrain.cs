@@ -2,6 +2,8 @@
 using System.Text;
 
 using DNT.Diag.Interop;
+using DNT.Diag.IO;
+using DNT.Diag.DB;
 
 namespace DNT.Diag.ECU.Synerject
 {
@@ -9,9 +11,9 @@ namespace DNT.Diag.ECU.Synerject
   {
     private IntPtr _native = IntPtr.Zero;
 
-    public Powertrain(IntPtr boxNative, IntPtr dbNative, PowertrainModel model)
+    public Powertrain(Commbox box, VehicleDB db, PowertrainModel model)
     {
-      _native = NativeMethods.RSynerjectPowertrainConstruct(boxNative, dbNative, (int)model);
+      _native = NativeMethods.RSynerjectPowertrainConstruct(box.Native, db.Native, (int)model);
       base.Native = NativeMethods.RSynerjectPowertrainCast(_native);
     }
 

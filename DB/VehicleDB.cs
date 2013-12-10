@@ -48,7 +48,7 @@ namespace DNT.Diag.DB
       return UTF8Encoding.UTF8.GetString(utf8, 0, length);
     }
 
-    public IntPtr Native
+    internal IntPtr Native
     {
       get { return _native; }
     }

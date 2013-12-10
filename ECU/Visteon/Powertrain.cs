@@ -1,6 +1,8 @@
 ﻿using System;
 
 using DNT.Diag.Interop;
+using DNT.Diag.IO;
+using DNT.Diag.DB;
 
 namespace DNT.Diag.ECU.Visteon
 {
@@ -8,9 +10,9 @@ namespace DNT.Diag.ECU.Visteon
   {
     private IntPtr _native = IntPtr.Zero;
 
-    public Powertrain(IntPtr boxNative, IntPtr dbNative, PowertrainModel model)
+    public Powertrain(Commbox box, VehicleDB db, PowertrainModel model)
     {
-      _native = NativeMethods.RVisteonPowertrainConstruct(boxNative, dbNative, (int)model);
+      _native = NativeMethods.RVisteonPowertrainConstruct(box.Native, db.Native, (int)model);
       base.Native = NativeMethods.RVisteonPowertrainCast(_native);
     }
 

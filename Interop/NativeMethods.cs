@@ -115,7 +115,7 @@ namespace DNT.Diag.Interop
     internal static extern int RTroubleCodeVectorSize(IntPtr p);
 
     [DllImport("dntdiag", CallingConvention = CallingConvention.Cdecl)]
-    internal static extern IntPtr RTrobleCodeVectorGet(IntPtr p, int index);
+    internal static extern IntPtr RTroubleCodeVectorGet(IntPtr p, int index);
 
     // Trouble Code Function
     [DllImport("dntdiag", CallingConvention = CallingConvention.Cdecl)]
@@ -169,6 +169,9 @@ namespace DNT.Diag.Interop
 
     [DllImport("dntdiag", CallingConvention = CallingConvention.Cdecl)]
     internal static extern bool RLiveDataItemIsShowed(IntPtr p);
+
+    [DllImport("dntdiag", CallingConvention = CallingConvention.Cdecl)]
+    internal static extern void RLiveDataItemSetShowed(IntPtr p, bool isShowed);
 
     [DllImport("dntdiag", CallingConvention = CallingConvention.Cdecl)]
     internal static extern bool RLiveDataItemIsOutOfRange(IntPtr p);

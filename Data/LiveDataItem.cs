@@ -150,6 +150,10 @@ namespace DNT.Diag.Data
       {
         return NativeMethods.RLiveDataItemIsShowed(_native);
       }
+      set
+      {
+        NativeMethods.RLiveDataItemSetShowed(_native, value);
+      }
     }
 
     public bool IsOutOfRange

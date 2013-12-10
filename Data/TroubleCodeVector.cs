@@ -14,7 +14,7 @@ namespace DNT.Diag.Data
       int size = NativeMethods.RTroubleCodeVectorSize(_native);
       for (int i = 0; i < size; i++)
       {
-        Add(new TroubleCodeItem(NativeMethods.RTrobleCodeVectorGet(_native, i)));
+        Add(new TroubleCodeItem(NativeMethods.RTroubleCodeVectorGet(_native, i)));
       }
     }
 

@@ -9,10 +9,12 @@ namespace DNT.Diag.ECU
   public class TroubleCodeFunction
   {
     IntPtr _native;
+    AbstractECU _ecu;
 
-    internal TroubleCodeFunction(IntPtr native)
+    internal TroubleCodeFunction(IntPtr native, AbstractECU ecu)
     {
       _native = native;
+      _ecu = ecu;
     }
 
     ~TroubleCodeFunction()
@@ -22,12 +24,19 @@ namespace DNT.Diag.ECU
       NativeMethods.RTroubleCodeFunctionFree(_native);
     }
 
+    private void CheckNative()
+    {
+      if (_native == IntPtr.Zero)
+        throw new NullReferenceException();
+    }
+
     public TroubleCodeVector Current
     {
       get
       {
+        CheckNative();
         if (!NativeMethods.RTroubleCodeFunctionCurrent(_native))
-          throw new IOException();
+          throw new IOException(_ecu.LastInfo);
         return new TroubleCodeVector(NativeMethods.RTroubleCodeFunctionGetTroubleCodes(_native));
       }
     }
@@ -36,16 +45,18 @@ namespace DNT.Diag.ECU
     {
       get
       {
+        CheckNative();
         if (!NativeMethods.RTroubleCodeFunctionHistory(_native))
-          throw new IOException();
+          throw new IOException(_ecu.LastInfo);
         return new TroubleCodeVector(NativeMethods.RTroubleCodeFunctionGetTroubleCodes(_native));
       }
     }
 
     public void Clear()
     {
+      CheckNative();
       if (!NativeMethods.RTroubleCodeFunctionClear(_native))
-        throw new IOException();
+        throw new IOException(_ecu.LastInfo);
     }
   }
 }

@@ -36,6 +36,14 @@ namespace DNT.Diag.IO
       }
     }
 
+    internal IntPtr Native
+    {
+      get
+      {
+        return _native;
+      }
+    }
+
     private void OpenC168SerialMode()
     {
       var portNames = SerialPort.GetPortNames();
