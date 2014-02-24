@@ -1,103 +1,98 @@
 ﻿using System;
+using System.Text;
 using System.Collections.Generic;
-
-using DNT.Diag.Interop;
 
 namespace DNT.Diag.Data
 {
-  public class LiveDataList : List<LiveDataItem>
+  public class LiveDataList : IEnumerable<LiveDataItem>
   {
-    IntPtr _native;
-    LiveDataItem[] _enabledItems;
-    LiveDataItem[] _showedItems;
+    //const int MaxBuffCount = 0xFFF;
+    //Dictionary<string, byte[]> _ecuResponseBuff;
+    //Dictionary<string, string> _queryCmdNameClassByShortName;
+    //Dictionary<string, byte[]> _commandNeed;
+    //List<LiveDataItem> _needItems;
+    List<LiveDataItem> _items;
+    Dictionary<string, LiveDataItem> _queryByShortName;
 
-    void FillEnabledItems()
+    internal LiveDataList()
     {
-      int size = NativeMethods.RLiveDataListGetEnabledCount(_native);
-      _enabledItems = new LiveDataItem[size];
-      for (int i = 0; i < size; i++)
-      {
-        int index = NativeMethods.RLiveDataListGetEnabledIndex(_native, i);
-        _enabledItems[i] = this[index];
-      }
+      //_ecuResponseBuff = new Dictionary<string, byte[]>();
+      //_queryCmdNameClassByShortName = new Dictionary<string, string>();
+      //_commandNeed = new Dictionary<string, byte[]>();
+      //_needItems = new List<LiveDataItem>();
+      _items = new List<LiveDataItem>();
+      _queryByShortName = new Dictionary<string, LiveDataItem>();
     }
 
-    void FillShowedItems()
+    //public void PrepareDisplay()
+    //{
+    //  _commandNeed.Clear();
+    //  _needItems.Clear();
+
+    //  StringBuilder sb = new StringBuilder(100);
+
+    //  for (int i = 0; i < _items.Count; i++)
+    //  {
+    //    if (_items[i].IsEnabled && _items[i].IsDisplay)
+    //    {
+    //      sb.Clear();
+    //      sb.AppendFormat("{0}_{1}", _items[i].CmdName, _items[i].CmdClass);
+    //      string key = sb.ToString();
+    //      if (!_commandNeed.ContainsKey(key))
+    //        _commandNeed[key] = _items[i].FormattedCommand;
+    //      _needItems.Add(_items[i]);
+    //    }
+    //  }
+    //}
+
+    internal void Add(LiveDataItem item)
     {
-      int size = NativeMethods.RLiveDataListGetShowedCount(_native);
-      _showedItems = new LiveDataItem[size];
-      for (int i = 0; i < size; i++)
-      {
-        int index = NativeMethods.RLiveDataListGetShowedIndex(_native, i);
-        _showedItems[i] = this[index];
-      }
+      _items.Add(item);
+      _queryByShortName[item.ShortName] = item;
+      //string cmdClassName = item.CmdClass + item.CmdName;
+      //if (!_ecuResponseBuff.ContainsKey(cmdClassName))
+      //  _ecuResponseBuff[cmdClassName] = new byte[MaxBuffCount];
+      //item.EcuResponseBuff = _ecuResponseBuff[cmdClassName];
+      //_queryCmdNameClassByShortName[item.ShortName] = cmdClassName;
     }
 
-    internal LiveDataList(IntPtr native)
-    {
-      _native = native;
-      int size = NativeMethods.RLiveDataListSize(_native);
-      for (int i = 0; i < size; i++)
-      {
-        Add(new LiveDataItem(NativeMethods.RLiveDataListGet(_native, i)));
-      }
+    //public List<LiveDataItem> GetNeedItems()
+    //{
+    //  return _needItems;
+    //}
 
-      FillEnabledItems();
-
-      FillShowedItems();
-    }
-
-    ~LiveDataList()
-    {
-      NativeMethods.RLiveDataListFree(_native);
-    }
-
-    public void Collate()
-    {
-      NativeMethods.RLiveDataListCollateEnable(_native);
-      FillEnabledItems();
-
-      NativeMethods.RLiveDataListCollateShowed(_native);
-      FillShowedItems();
-    }
-
-    // Must call collate first
-    public LiveDataItem[] EnabledItems
+    public LiveDataItem this[string shortName]
     {
       get
       {
-        return _enabledItems;
+        if (!_queryByShortName.ContainsKey(shortName))
+          throw new ArgumentException("shortName");
+
+        return _queryByShortName[shortName];
       }
     }
 
-    // Must call collate first
-    public LiveDataItem[] ShowedItems
+    public LiveDataItem this[int index]
     {
       get
       {
-        return _showedItems;
+        return _items[index];
       }
     }
 
-    public int NextShowedIndex
+    public int Count
     {
-      get
-      {
-        return NativeMethods.RLiveDataListGetNextShowedIndex(_native);
-      }
+      get { return _items.Count; }
     }
 
-    public int GetShowedPosition(int index)
+    public IEnumerator<LiveDataItem> GetEnumerator()
     {
-      return NativeMethods.RLiveDataListGetShowedPosition(_native, index);
+      return _items.GetEnumerator();
     }
 
-    public bool IsEmpty
+    System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
     {
-      get
-      {
-        return NativeMethods.RLiveDataListEmpty(_native);
-      }
+      return GetEnumerator();
     }
   }
 }

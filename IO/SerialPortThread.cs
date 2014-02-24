@@ -7,16 +7,19 @@ namespace DNT.Diag.IO
 {
   internal class SerialPortThread
   {
-    private SerialPort _port = null;
-    private IOBuffer _stream = null;
-    private Task _writeTask = null;
-    private byte[] _readBuff = new byte[256];
-    private byte[] _writeBuff = new byte[256];
+    SerialPort _port = null;
+    ToEcuBuffer _toEcu = null;
+    FromEcuBuffer _fromEcu = null;
+    Task _writeTask = null;
+    byte[] _readBuff = new byte[256];
+    byte[] _writeBuff = new byte[256];
 
-    public SerialPortThread(IOBuffer stream, SerialPort port)
+    public SerialPortThread(ToEcuBuffer toEcu, FromEcuBuffer fromEcu, SerialPort port)
     {
       _port = port;
-      _stream = stream;
+      _toEcu = toEcu;
+      _fromEcu = fromEcu;
+
       _port.DataReceived += (object sender, SerialDataReceivedEventArgs e) =>
       {
         try
@@ -26,7 +29,7 @@ namespace DNT.Diag.IO
           {
             count = Math.Min(count, _readBuff.Length);
             _port.Read(_readBuff, 0, count);
-            _stream.PushToEcuBuffer(_readBuff, 0, count);
+            _fromEcu.Write(_readBuff, 0, count);
             count = _port.BytesToRead;
           }
         }
@@ -34,26 +37,26 @@ namespace DNT.Diag.IO
         {
         }
       };
-      _writeTask = Task.Factory.StartNew(() =>
+
+      _writeTask = Task.Factory.StartNew(() => 
       {
         while (_port.IsOpen)
         {
           try
           {
-            int count = _stream.ToEcuBufferBytesAvailable();
+            int count = _toEcu.BytesToRead;
             while (count != 0)
             {
               count = Math.Min(count, _writeBuff.Length);
-              _stream.PopFromEcuBuffer(_writeBuff, 0, count);
+              _toEcu.Read(_writeBuff, 0, count);
               _port.Write(_writeBuff, 0, count);
-              count = _stream.ToEcuBufferBytesAvailable();
+              count = _toEcu.BytesToRead;
             }
             Thread.Sleep(1);
             Thread.Yield();
           }
           catch
           {
-
           }
         }
       });

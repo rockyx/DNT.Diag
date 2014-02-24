@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{CA10CB24-5D25-404A-B3E5-AE83BF3F1C08}</ProjectGuid>
+    <ProjectGuid>{A51E9A30-7830-4F94-99B1-E53D4D2D46BA}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>DNT.Diag.Test</RootNamespace>
@@ -50,16 +50,14 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="Mikuni\PowertrainTest.cs" />
-    <Compile Include="RegisterTest.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SystemDBTest.cs" />
-    <Compile Include="CommboxTest.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="EcuIOBufferTest.cs" />
     <Compile Include="VehicleDBTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DNT.Diag.csproj">
-      <Project>{7283f785-dca8-40b4-925d-932906dd00b0}</Project>
+      <Project>{0a41e758-5ee7-4c21-8230-2a1e5fe02cca}</Project>
       <Name>DNT.Diag</Name>
     </ProjectReference>
   </ItemGroup>
@@ -83,9 +81,6 @@
   </Choose>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>copy $(SolutionDir)$(ConfigurationName)\dntdiag.dll $(TargetDir)</PostBuildEvent>
-  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

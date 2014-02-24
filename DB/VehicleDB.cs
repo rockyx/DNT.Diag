@@ -1,56 +1,118 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.SQLite;
+using System.Linq;
 using System.Text;
-using System.IO;
+using System.Threading.Tasks;
 
-using DNT.Diag.Interop;
+using DNT.Diag.Data;
 
 namespace DNT.Diag.DB
 {
   public class VehicleDB
   {
-    private IntPtr _native;
+    SQLiteConnection _conn;
+    VehicleDBText _text;
+    VehicleDBCommand _command;
+    VehicleDBTroubleCode _troubleCode;
+    VehicleDBLiveData _liveData;
 
-    public VehicleDB(string path, string name)
+    public VehicleDB()
     {
-      byte[] pathUtf8 = UTF8Encoding.UTF8.GetBytes(path);
-      byte[] nameUtf8 = UTF8Encoding.UTF8.GetBytes(name);
-      _native = NativeMethods.RVehicleDBNew(pathUtf8, pathUtf8.Length, nameUtf8, nameUtf8.Length);
-      if (_native == IntPtr.Zero)
-        throw new NullReferenceException();
-    }
-
-    ~VehicleDB()
-    {
-      NativeMethods.RVehicleDBFree(_native);
-    }
-
-    public void Open()
-    {
-      if (_native == IntPtr.Zero)
-        throw new NullReferenceException();
-      if (!NativeMethods.RVehicleDBOpen(_native))
-        throw new FileNotFoundException();
+      _conn = null;
+      _text = null;
+      _command = null;
+      _troubleCode = null;
+      _liveData = null;
     }
 
     public void Close()
     {
-      if (_native == IntPtr.Zero)
-        throw new NullReferenceException();
-      NativeMethods.RVehicleDBClose(_native);
+      if (_liveData != null)
+        _liveData.Dispose();
+
+      if (_troubleCode != null)
+        _troubleCode.Dispose();
+
+      if (_command != null)
+        _command.Dispose();
+
+      if (_text != null)
+        _text.Dispose();
+
+      if (_conn != null)
+        _conn.Close();
+
+      _liveData = null;
+      _troubleCode = null;
+      _command = null;
+      _text = null;
+      _conn = null;
     }
 
-    public string GetLanguage()
+    public void Open(string filePath, string dbName)
     {
-      if (_native == IntPtr.Zero)
-        throw new NullReferenceException();
-      byte[] utf8 = new byte[100];
-      int length = NativeMethods.RVehicleDBGetLanguage(_native, utf8);
-      return UTF8Encoding.UTF8.GetString(utf8, 0, length);
+      try
+      {
+        Close();
+
+        SQLiteConnectionStringBuilder connstr = new SQLiteConnectionStringBuilder();
+        StringBuilder sb = new StringBuilder();
+        if (filePath.EndsWith("/") || filePath.EndsWith("\\"))
+        {
+          sb.AppendFormat("{0}{1}.db", filePath, dbName);
+        }
+        else
+        {
+          sb.AppendFormat("{0}/{1}.db", filePath, dbName);
+        }
+
+        connstr.DataSource = sb.ToString();
+        _conn = new SQLiteConnection();
+        _conn.ConnectionString = connstr.ToString();
+        _conn.Open();
+
+        _text = new VehicleDBText(_conn);
+        _command = new VehicleDBCommand(_conn);
+        _troubleCode = new VehicleDBTroubleCode(_conn);
+        _liveData = new VehicleDBLiveData(_conn, _command);
+      }
+      catch
+      {
+        Close();
+        throw new DatabaseException("Cannot open vehicle database!");
+      }
     }
 
-    internal IntPtr Native
+    void CheckOpened<T>(T obj)
     {
-      get { return _native; }
+      if (obj == null)
+        throw new DatabaseException("Vehicle database doesn't open yet!");
+    }
+
+    public string QueryText(string name, string cls)
+    {
+      CheckOpened(_text);
+      return _text.Get(name, cls);
+    }
+
+    public byte[] QueryCommand(string name, string cls)
+    {
+      CheckOpened(_command);
+      return _command.Get(name, cls);
+    }
+
+    public TroubleCodeItem QueryTroubleCode(string code, string cls)
+    {
+      CheckOpened(_troubleCode);
+      return _troubleCode.Get(code, cls);
+    }
+
+    public LiveDataList QueryLiveData(string cls)
+    {
+      CheckOpened(_liveData);
+      return _liveData.Get(cls);
     }
   }
 }

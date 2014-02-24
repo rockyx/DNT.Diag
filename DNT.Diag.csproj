@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{7283F785-DCA8-40B4-925D-932906DD00B0}</ProjectGuid>
+    <ProjectGuid>{0A41E758-5EE7-4C21-8230-2A1E5FE02CCA}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>DNT.Diag</RootNamespace>
@@ -32,6 +32,12 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data.SQLite">
+      <HintPath>packages\System.Data.SQLite.1.0.90.0\lib\net45\System.Data.SQLite.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data.SQLite.Linq">
+      <HintPath>packages\System.Data.SQLite.1.0.90.0\lib\net45\System.Data.SQLite.Linq.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -39,40 +45,82 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Attribute\Attribute.cs" />
+    <Compile Include="Attribute\CanbusBaudRate.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Attribute\CanbusFilterMask.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Attribute\CanbusFrameType.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Attribute\CanbusIDMode.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Attribute\KWP2KMode.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Attribute\KWP2KStartType.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Attribute\Parity.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Formats\AbstractFormat.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Formats\ISO9141Format.cs" />
+    <Compile Include="Formats\KWP1282Format.cs" />
+    <Compile Include="Formats\KWP2KFormat.cs" />
+    <Compile Include="Formats\MikuniFormatV1.cs" />
+    <Compile Include="Formats\MikuniFormatV2.cs" />
+    <Compile Include="Settings.cs" />
     <Compile Include="Data\LiveDataItem.cs" />
+    <Compile Include="Data\LiveDataItemComparer.cs" />
     <Compile Include="Data\LiveDataList.cs" />
     <Compile Include="Data\TroubleCodeItem.cs" />
-    <Compile Include="Data\TroubleCodeVector.cs" />
+    <Compile Include="DB\AbstractDB.cs" />
+    <Compile Include="DB\DatabaseException.cs" />
+    <Compile Include="DB\LocaleDB.cs" />
     <Compile Include="DB\SystemDB.cs" />
     <Compile Include="DB\VehicleDB.cs" />
-    <Compile Include="ECU\AbstractECU.cs" />
-    <Compile Include="ECU\ActiveState.cs" />
-    <Compile Include="ECU\ActiveTestFunction.cs" />
-    <Compile Include="ECU\Bosch\Canbus\Chassis.cs" />
-    <Compile Include="ECU\Bosch\ChassisModel.cs" />
-    <Compile Include="ECU\DataStreamFunction.cs" />
-    <Compile Include="ECU\Denso\Powertrain.cs" />
-    <Compile Include="ECU\Denso\PowertrainModel.cs" />
-    <Compile Include="ECU\Mikuni\Powertrain.cs" />
-    <Compile Include="ECU\Mikuni\PowertrainModel.cs" />
-    <Compile Include="ECU\Synerject\Powertrain.cs" />
-    <Compile Include="ECU\Synerject\PowertrainModel.cs" />
-    <Compile Include="ECU\TroubleCodeFunction.cs" />
-    <Compile Include="ECU\Visteon\Powertrain.cs" />
-    <Compile Include="ECU\Visteon\PowertrainModel.cs" />
-    <Compile Include="Interop\NativeMethods.cs" />
-    <Compile Include="IO\Commbox.cs" />
-    <Compile Include="IO\CommboxVer.cs" />
-    <Compile Include="IO\IOBuffer.cs" />
-    <Compile Include="IO\SerialPortThread.cs" />
+    <Compile Include="DB\VehicleDBCommand.cs" />
+    <Compile Include="DB\VehicleDBItem.cs" />
+    <Compile Include="DB\VehicleDBLiveData.cs" />
+    <Compile Include="DB\VehicleDBText.cs" />
+    <Compile Include="DB\VehicleDBTroubleCode.cs" />
+    <Compile Include="Commbox\AbstractStream.cs" />
+    <Compile Include="Commbox\StreamException.cs" />
+    <Compile Include="Commbox\Version.cs" />
+    <Compile Include="Buffer\FromEcuBuffer.cs" />
+    <Compile Include="Commbox\GL\C168\C168Stream.cs" />
+    <Compile Include="Commbox\GL\C168\C168StreamPrivate.cs" />
+    <Compile Include="Commbox\GL\C168\C168Constant.cs" />
+    <Compile Include="Commbox\GL\GLStream.cs" />
+    <Compile Include="Commbox\GL\GLStreamImpl.cs" />
+    <Compile Include="Commbox\GL\Constant.cs" />
+    <Compile Include="Commbox\GL\W80\W80Stream.cs" />
+    <Compile Include="Commbox\GL\W80\W80StreamPrivate.cs" />
+    <Compile Include="Commbox\GL\W80\W80Constant.cs" />
+    <Compile Include="Commbox\IStream.cs" />
+    <Compile Include="Buffer\ToEcuBuffer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Register.cs" />
+    <Compile Include="Timer.cs" />
+    <Compile Include="Utils.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="x64\SQLite.Interop.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="x86\SQLite.Interop.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PreBuildEvent>copy $(SolutionDir)$(ConfigurationName)\dntdiag.dll $(TargetDir)</PreBuildEvent>
-  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

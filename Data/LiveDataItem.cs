@@ -1,200 +1,174 @@
 ﻿using System;
-using System.Text;
-
-using DNT.Diag.Interop;
+using System.ComponentModel;
 
 namespace DNT.Diag.Data
 {
-  public class LiveDataItem
+  public class LiveDataItem : INotifyPropertyChanged
   {
-    IntPtr _native;
-    string _shortName = null;
-    string _content = null;
-    string _unit = null;
-    string _defaultValue = null;
-    string _description = null;
-    string _cmdName = null;
-    string _cmdClass = null;
-    string _minValue = null;
-    string _maxValue = null;
-    int _index;
-    byte[] _cmd = null;
-    byte[] _valueBuff = new byte[100];
+    string _shortName;
+    string _content;
+    string _unit;
+    string _defaultValue;
+    string _description;
+    string _minValue;
+    string _maxValue;
+    string _cmdName;
+    string _cmdClass;
+    string _value;
+    byte[] _command;
+    byte[] _formattedCommand;
+    byte[] _ecuResponseBuff;
+    int _indexForSort;
+    bool _isEnabled;
+    bool _isDisplay;
+    bool _isOutOfRange;
 
-    internal LiveDataItem(IntPtr native)
+    Func<LiveDataItem, string> CalcFunction;
+
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    public LiveDataItem()
     {
-      _native = native;
-      byte[] utf8 = new byte[1024];
-      int length = NativeMethods.RLiveDataItemGetShortName(_native, utf8);
-      _shortName = UTF8Encoding.UTF8.GetString(utf8, 0, length);
-
-      length = NativeMethods.RLiveDataItemGetContent(_native, utf8);
-      _content = UTF8Encoding.UTF8.GetString(utf8, 0, length);
-
-      length = NativeMethods.RLiveDataItemGetUnit(_native, utf8);
-      _unit = UTF8Encoding.UTF8.GetString(utf8, 0, length);
-
-      length = NativeMethods.RLiveDataItemGetDefaultValue(_native, utf8);
-      _defaultValue = UTF8Encoding.UTF8.GetString(utf8, 0, length);
-
-      length = NativeMethods.RLiveDataItemGetDescription(_native, utf8);
-      _description = UTF8Encoding.UTF8.GetString(utf8, 0, length);
-
-      length = NativeMethods.RLiveDataItemGetCmdName(_native, utf8);
-      _cmdName = UTF8Encoding.UTF8.GetString(utf8, 0, length);
-
-      length = NativeMethods.RLiveDataItemGetCmdClass(_native, utf8);
-      _cmdClass = UTF8Encoding.UTF8.GetString(utf8, 0, length);
-
-      _index = NativeMethods.RLiveDataItemGetIndex(_native);
-
-      length = NativeMethods.RLiveDataItemGetMinValue(_native, utf8);
-      _minValue = UTF8Encoding.UTF8.GetString(utf8, 0, length);
-
-      length = NativeMethods.RLiveDataItemGetMaxValue(_native, utf8);
-      _maxValue = UTF8Encoding.UTF8.GetString(utf8, 0, length);
-
-      length = NativeMethods.RLiveDataItemGetCommand(_native, utf8);
-      _cmd = new byte[length];
-      Array.Copy(utf8, _cmd, length);
-    }
-
-    ~LiveDataItem()
-    {
-      NativeMethods.RLiveDataItemFree(_native);
+      _shortName = "";
+      _content = "";
+      _unit = "";
+      _defaultValue = "";
+      _description = "";
+      _minValue = "";
+      _maxValue = "";
+      _value = "";
+      _command = null;
+      _formattedCommand = null;
+      _ecuResponseBuff = null;
+      _indexForSort = -1;
+      _isEnabled = false;
+      _isDisplay = false;
+      _isOutOfRange = false;
+      CalcFunction = null;
     }
 
     public string ShortName
     {
-      get
-      {
-        return _shortName;
-      }
+      get { return _shortName; }
+      set { _shortName = value; }
     }
 
     public string Content
     {
-      get
-      {
-        return _content;
-      }
+      get { return _content; }
+      set { _content = value; }
     }
 
     public string Unit
     {
-      get
-      {
-        return _unit;
-      }
+      get { return _unit; }
+      set { _unit = value; }
     }
 
     public string DefaultValue
     {
-      get
-      {
-        return _defaultValue;
-      }
+      get { return _defaultValue; }
+      set { _defaultValue = value; }
     }
 
     public string Description
     {
-      get
-      {
-        return _description;
-      }
-    }
-
-    public string CmdName
-    {
-      get
-      {
-        return _cmdName;
-      }
-    }
-
-    public string CmdClass
-    {
-      get
-      {
-        return _cmdClass;
-      }
-    }
-
-    public int Index
-    {
-      get
-      {
-        return _index;
-      }
-    }
-
-    public int Position
-    {
-      get
-      {
-        return NativeMethods.RLiveDataItemGetPosition(_native);
-      }
-    }
-
-    public bool IsEnabled
-    {
-      get
-      {
-        return NativeMethods.RLiveDataItemIsEnabled(_native);
-      }
-    }
-
-    public bool IsShowed
-    {
-      get
-      {
-        return NativeMethods.RLiveDataItemIsShowed(_native);
-      }
-      set
-      {
-        NativeMethods.RLiveDataItemSetShowed(_native, value);
-      }
-    }
-
-    public bool IsOutOfRange
-    {
-      get
-      {
-        return NativeMethods.RLiveDataItemIsOutOfRange(_native);
-      }
+      get { return _description; }
+      set { _description = value; }
     }
 
     public string MinValue
     {
-      get
-      {
-        return _minValue;
-      }
+      get { return _minValue; }
+      set { _minValue = value; }
     }
 
     public string MaxValue
     {
-      get
+      get { return _maxValue; }
+      set { _maxValue = value; }
+    }
+
+    public string CmdName
+    {
+      get { return _cmdName; }
+      set { _cmdName = value; }
+    }
+
+    public string CmdClass
+    {
+      get { return _cmdClass; }
+      set { _cmdClass = value; }
+    }
+
+    public string Value
+    {
+      get { return _value; }
+      set
       {
-        return _maxValue;
+        if (_value != value)
+        {
+          _value = value;
+          if (PropertyChanged != null)
+            PropertyChanged(this, new PropertyChangedEventArgs("Value"));
+        }
       }
     }
 
     public byte[] Command
     {
-      get
+      get { return _command; }
+      set { _command = value; }
+    }
+
+    public byte[] FormattedCommand
+    {
+      get { return _formattedCommand; }
+      set { _formattedCommand = value; }
+    }
+
+    public byte[] EcuResponseBuff
+    {
+      get { return _ecuResponseBuff; }
+      set { _ecuResponseBuff = value; }
+    }
+
+    public int IndexForSort
+    {
+      get { return _indexForSort; }
+      set { _indexForSort = value; }
+    }
+
+    public bool IsEnabled
+    {
+      get { return _isEnabled; }
+      set { _isEnabled = value; }
+    }
+
+    public bool IsDisplay
+    {
+      get { return _isDisplay; }
+      set { _isDisplay = value; }
+    }
+
+    public bool IsOutOfRange
+    {
+      get { return _isOutOfRange; }
+      set
       {
-        return _cmd;
+        if (_isOutOfRange != value)
+        {
+          _isOutOfRange = value;
+          if (PropertyChanged != null)
+            PropertyChanged(this, new PropertyChangedEventArgs("IsOutOfRange"));
+        }
       }
     }
 
-    public string Value
+    public void CalcValue()
     {
-      get
-      {
-        int length = NativeMethods.RLiveDataItemGetValue(_native, _valueBuff);
-        return UTF8Encoding.UTF8.GetString(_valueBuff, 0, length);
-      }
+      if (CalcFunction != null)
+        Value = CalcFunction(this);
     }
   }
 }

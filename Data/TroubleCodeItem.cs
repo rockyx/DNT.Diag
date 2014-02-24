@@ -1,52 +1,56 @@
 ﻿using System;
-using System.Text;
-
-using DNT.Diag.Interop;
 
 namespace DNT.Diag.Data
 {
   public class TroubleCodeItem
   {
-    IntPtr _native;
+    string _code;
+    string _content;
+    string _description;
 
-    internal TroubleCodeItem(IntPtr native)
+    public TroubleCodeItem()
     {
-      _native = native;
-    }
-
-    ~TroubleCodeItem()
-    {
-      NativeMethods.RTroubleCodeItemFree(_native);
+      _code = "";
+      _content = "";
+      _description = "";
     }
 
     public string Code
     {
-      get
-      {
-        byte[] text = new byte[100];
-        int length = NativeMethods.RTroubleCodeItemGetCode(_native, text);
-        return UTF8Encoding.UTF8.GetString(text, 0, length);
-      }
+      get { return _code; }
+      set { _code = value; }
     }
 
     public string Content
     {
-      get
-      {
-        byte[] text = new byte[1024];
-        int length = NativeMethods.RTroubleCodeItemGetContent(_native, text);
-        return UTF8Encoding.UTF8.GetString(text, 0, length);
-      }
+      get { return _content; }
+      set { _content = value; }
     }
 
     public string Description
     {
-      get
-      {
-        byte[] text = new byte[1024];
-        int length = NativeMethods.RTroubleCodeItemGetDescription(_native, text);
-        return UTF8Encoding.UTF8.GetString(text, 0, length);
-      }
+      get { return _description; }
+      set { _description = value; }
+    }
+
+    public override bool Equals(object obj)
+    {
+      if (obj == null)
+        return false;
+
+      if (this == obj) return true;
+
+      TroubleCodeItem item = obj as TroubleCodeItem;
+      if (item == null) return false;
+
+      return Code.Equals(item.Code) &&
+        Content.Equals(item.Content) &&
+        Description.Equals(item.Description);
+    }
+
+    public override int GetHashCode()
+    {
+      return base.GetHashCode();
     }
   }
 }
