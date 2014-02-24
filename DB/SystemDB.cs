@@ -1,13 +1,27 @@
 ﻿using System;
 using System.Data;
+#if ANDROID
+using Mono.Data.Sqlite;
+
+using Connection = Mono.Data.Sqlite.SqliteConnection;
+using Command = Mono.Data.Sqlite.SqliteCommand;
+using ConnectionStringBuilder = Mono.Data.Sqlite.SqliteConnectionStringBuilder;
+using Parameter = Mono.Data.Sqlite.SqliteParameter;
+#else
 using System.Data.SQLite;
+
+using Connection = SQLiteConnection;
+using Command = SQLiteCommand;
+using ConnectionStringBuilder = SQLiteConnectionStringBuilder;
+using Parameter = SQLiteParameter;
+#endif
 
 namespace DNT.Diag.DB
 {
   public class SystemDB : LocaleDB
   {
-    SQLiteConnection _conn = null;
-    SQLiteCommand _command = null;
+    Connection _conn = null;
+    Command _command = null;
 
     static SystemDB _inst;
 
@@ -35,16 +49,17 @@ namespace DNT.Diag.DB
 
       try
       {
-        SQLiteConnectionStringBuilder connstr = new SQLiteConnectionStringBuilder();
+        ConnectionStringBuilder connstr = new ConnectionStringBuilder();
+        _conn = new Connection();
+
         connstr.DataSource = (filePath.EndsWith("/") || filePath.EndsWith("\\")) ? filePath + "sys.db" : filePath + "/sys.db";
-        _conn = new SQLiteConnection();
         _conn.ConnectionString = connstr.ToString();
         _conn.Open();
 
-        _command = new SQLiteCommand(_conn);
+        _command = new Command(_conn);
         _command.CommandText = "SELECT Content FROM [Text] WHERE [Name]=:name AND [Language]=:language";
-        _command.Parameters.Add(new SQLiteParameter(":name", DbType.Binary));
-        _command.Parameters.Add(new SQLiteParameter(":language", DbType.Binary));
+        _command.Parameters.Add(new Parameter(":name", DbType.Binary));
+        _command.Parameters.Add(new Parameter(":language", DbType.Binary));
       }
       catch
       {

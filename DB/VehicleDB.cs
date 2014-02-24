@@ -1,10 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SQLite;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+#if ANDROID
+using Mono.Data.Sqlite;
+
+using Connection = Mono.Data.Sqlite.SqliteConnection;
+using Command = Mono.Data.Sqlite.SqliteCommand;
+using ConnectionStringBuilder = Mono.Data.Sqlite.SqliteConnectionStringBuilder;
+using Parameter = Mono.Data.Sqlite.SqliteParameter;
+#else
+using System.Data.SQLite;
+
+using Connection = SQLiteConnection;
+using Command = SQLiteCommand;
+using ConnectionStringBuilder = SQLiteConnectionStringBuilder;
+using Parameter = SQLiteParameter;
+#endif
 
 using DNT.Diag.Data;
 
@@ -12,7 +24,7 @@ namespace DNT.Diag.DB
 {
   public class VehicleDB
   {
-    SQLiteConnection _conn;
+    Connection _conn;
     VehicleDBText _text;
     VehicleDBCommand _command;
     VehicleDBTroubleCode _troubleCode;
@@ -57,7 +69,7 @@ namespace DNT.Diag.DB
       {
         Close();
 
-        SQLiteConnectionStringBuilder connstr = new SQLiteConnectionStringBuilder();
+        ConnectionStringBuilder connstr = new ConnectionStringBuilder();
         StringBuilder sb = new StringBuilder();
         if (filePath.EndsWith("/") || filePath.EndsWith("\\"))
         {
@@ -69,7 +81,7 @@ namespace DNT.Diag.DB
         }
 
         connstr.DataSource = sb.ToString();
-        _conn = new SQLiteConnection();
+        _conn = new Connection();
         _conn.ConnectionString = connstr.ToString();
         _conn.Open();
 

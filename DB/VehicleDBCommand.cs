@@ -1,16 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+#if ANDROID
+using Mono.Data.Sqlite;
+
+using Connection = Mono.Data.Sqlite.SqliteConnection;
+using Command = Mono.Data.Sqlite.SqliteCommand;
+using ConnectionStringBuilder = Mono.Data.Sqlite.SqliteConnectionStringBuilder;
+using Parameter = Mono.Data.Sqlite.SqliteParameter;
+#else
 using System.Data.SQLite;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
+using Connection = SQLiteConnection;
+using Command = SQLiteCommand;
+using ConnectionStringBuilder = SQLiteConnectionStringBuilder;
+using Parameter = SQLiteParameter;
+#endif
 
 namespace DNT.Diag.DB
 {
   public class VehicleDBCommand : VehicleDBItem
   {
-    public VehicleDBCommand(SQLiteConnection conn)
+    public VehicleDBCommand(Connection conn)
       : base(conn, "SELECT [Command] FROM [Command] WHERE [Name]=:name AND [Class]=:class")
     {
       Command.Parameters.Add(":name", DbType.Binary);

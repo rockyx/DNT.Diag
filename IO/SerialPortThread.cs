@@ -3,6 +3,8 @@ using System.IO.Ports;
 using System.Threading.Tasks;
 using System.Threading;
 
+using DNT.Diag.Buffer;
+
 namespace DNT.Diag.IO
 {
   internal class SerialPortThread
